@@ -40,15 +40,11 @@ Before starting, please review the exercise guidelines at
     In fact, it's possible to implement this function as just a single
     call to foldl, with an appropriate helper function!
 |#
-(define (helper expr hash)
-  (cond
-    [(number? (third expr)) (hash-set hash (second expr) (third expr))]
-    [else (hash-set hash (second expr) (hash-ref hash (third expr)))])) 
-
 (define (build-env bindings)
-  (foldl helper (hash) bindings))
+  (void))
 
-(module+ test
+
+#;(module+ test
   (test-equal? "One binding"
                (build-env (list '(define x 3)))
                (hash 'x 3))
@@ -92,10 +88,10 @@ Before starting, please review the exercise guidelines at
 
 
 #;(module+ test
-    (test-equal? "curry-2/Addition"
-                 (let ([f (curry-2 (lambda (x y) (+ x y)))])
-                   ((f 3) 5))  ; (f 3) is a function call!
-                 8))
+  (test-equal? "curry-2/Addition"
+               (let ([f (curry-2 (lambda (x y) (+ x y)))])
+                 ((f 3) 5))  ; (f 3) is a function call!
+               8))
 
 
 #|
@@ -122,12 +118,12 @@ Before starting, please review the exercise guidelines at
 
 
 #;(module+ test
-    (test-equal? "fix-first/ternary"
-                 (let ([f2 (fix-first 3
-                                      (lambda (x y z) (+ x (* y z))))])
-                   (f2 5 8))
-                 ; We've deliberately left the body unexpanded to show what's going on.
-                 (+ 3 (* 5 8))))
+  (test-equal? "fix-first/ternary"
+              (let ([f2 (fix-first 3
+                                   (lambda (x y z) (+ x (* y z))))])
+                (f2 5 8))
+              ; We've deliberately left the body unexpanded to show what's going on.
+              (+ 3 (* 5 8))))
 
 
 #|
@@ -160,7 +156,7 @@ Before starting, please review the exercise guidelines at
 (module+ test
 
   #;(test-equal? "curry-n/ternary"
-                 (let ([f3 (curry-n 3
-                                    (lambda (x y z) (+ x (* y z))))])
-                   (((f3 3) 5) 8))
-                 (+ 3 (* 5 8))))
+               (let ([f3 (curry-n 3
+                                  (lambda (x y z) (+ x (* y z))))])
+                 (((f3 3) 5) 8))
+               (+ 3 (* 5 8))))
