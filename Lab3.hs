@@ -30,17 +30,17 @@ module Lab3 (Op, ArithExpr, interpretArithWithIds) where
     -- |
     -- == Examples of expressions
     
-    -- | Example: The number 20.
-    numberExample :: Expr
-    numberExample = Number 20
+    -- -- | Example: The number 20.
+    -- numberExample :: Expr
+    -- numberExample = Number 20
     
-    -- | Example: (20 + 30)
-    plusExample :: Expr
-    plusExample = BinOp (Number 20) Plus (Number 30)
+    -- -- | Example: (20 + 30)
+    -- plusExample :: Expr
+    -- plusExample = BinOp (Number 20) Plus (Number 30)
     
-    -- | Example: (a + b)
-    timesWithIdExample :: Expr
-    timesWithIdExample = BinOp (Identifier "a") Times (Identifier "b")
+    -- -- | Example: (a + b)
+    -- timesWithIdExample :: Expr
+    -- timesWithIdExample = BinOp (Identifier "a") Times (Identifier "b")
     
     
     -- | Returns the value of the given arithmetic expression,
@@ -54,4 +54,7 @@ module Lab3 (Op, ArithExpr, interpretArithWithIds) where
     -- Tip for testing:
     -- You can use Map.fromList [(key1, value1), (key2, value2), ...] to create a Map.
     interpretArithWithIds :: Map.Map String Int -> ArithExpr -> Int
-    interpretArithWithIds env expr = undefined
+    interpretArithWithIds env (Number num) = num
+    interpretArithWithIds env (Identifier key) = (Map.lookup key env)
+    interpretArithWithIds env (BinOp expr1 Plus expr2) = (interpretArithWithIds env expr1) + (interpretArithWithIds env expr2)
+    interpretArithWithIds env (BinOp expr1 Times expr2) = (interpretArithWithIds env expr1) * (interpretArithWithIds env expr2)

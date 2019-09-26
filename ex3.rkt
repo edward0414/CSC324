@@ -40,13 +40,13 @@ Before starting, please review the exercise guidelines at
     In fact, it's possible to implement this function as just a single
     call to foldl, with an appropriate helper function!
 |#
-(define (helper expr hash)
+(define (build-env-helper expr hash)
   (cond
     [(number? (third expr)) (hash-set hash (second expr) (third expr))]
     [else (hash-set hash (second expr) (hash-ref hash (third expr)))])) 
 
 (define (build-env bindings)
-  (foldl helper (hash) bindings))
+  (foldl build-env-helper (hash) bindings))
 
 (module+ test
   (test-equal? "One binding"
@@ -88,14 +88,16 @@ Before starting, please review the exercise guidelines at
   30
 |#
 (define (curry-2 f)
-  (void))
+  (lambda (x)
+    (lambda (y)
+      (f x y))))
 
 
-#;(module+ test
-    (test-equal? "curry-2/Addition"
-                 (let ([f (curry-2 (lambda (x y) (+ x y)))])
-                   ((f 3) 5))  ; (f 3) is a function call!
-                 8))
+(module+ test
+  (test-equal? "curry-2/Addition"
+               (let ([f (curry-2 (lambda (x y) (+ x y)))])
+                 ((f 3) 5))  ; (f 3) is a function call!
+               8))
 
 
 #|
@@ -118,16 +120,22 @@ Before starting, please review the exercise guidelines at
   number of arguments to the returned function, calling f should raise an error.
 |#
 (define (fix-first x f)
-  (void))
+  (lambda rest
+    (apply f x rest)))
 
-
-#;(module+ test
-    (test-equal? "fix-first/ternary"
-                 (let ([f2 (fix-first 3
-                                      (lambda (x y z) (+ x (* y z))))])
-                   (f2 5 8))
-                 ; We've deliberately left the body unexpanded to show what's going on.
-                 (+ 3 (* 5 8))))
+(module+ test
+  (test-equal? "fix-first/ternary"
+               (let ([f2 (fix-first 3
+                                    (lambda (x y z) (+ x (* y z))))])
+                 (f2 5 8))
+               ; We've deliberately left the body unexpanded to show what's going on.
+               (+ 3 (* 5 8)))
+  (test-equal? "fix-first/ternary"
+               (let ([f2 (fix-first 3
+                                    (lambda (x y z a) (+ x y z a)))])
+                 (f2 1 2 4))
+               ; custom test case
+               (+ 3 1 2 4)))
 
 
 #|
@@ -147,19 +155,27 @@ Before starting, please review the exercise guidelines at
        (but doing curry-2 yourself first is easier).
     2. Review the handout's examples of currying to determine the correct
        *recursive structure* for this function.
-    3. If g = (curry-n n f), how is (g x) related to (fix-first x f)?
+    3. If g = (curry-n n f), how is (g x) related to (fix-first x f)? (curry-n n-1 (fix-first first f))
 |#
-(define (curry-n n f)
-  (void))
 
+(define (curry-n-helper n f lst)
+  (cond
+    [(equal? n 0) (apply f lst)]
+    [else (lambda(x) (curry-n-helper (- n 1) f (append lst (list x))))]))    
+
+(define (curry-n n f)
+  (curry-n-helper n f '()))
 
 ; NOTE: don't uncomment the test below until you've written
 ; your own test for a good *base case* for curry-n!
 ; (Until you're confident in your base case, you likely won't
 ; have much luck with a correct recursive case.)
 (module+ test
-
-  #;(test-equal? "curry-n/ternary"
+    (test-equal? "curry-2/Addition"
+                 (let ([f (curry-n 2 (lambda (x y) (+ x y)))])
+                   ((f 3) 5))  ; (f 3) is a function call!
+                 8)
+    (test-equal? "curry-n/ternary"
                  (let ([f3 (curry-n 3
                                     (lambda (x y z) (+ x (* y z))))])
                    (((f3 3) 5) 8))

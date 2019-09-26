@@ -75,9 +75,9 @@ prop_mapAdd2 nums =
 -- | Your Task: implement @tailCalls@ according to the exercise specification.
 -- We've started the structural pattern-matching for you; please modify as needed.
 tailCalls :: Expr -> [Expr]
-tailCalls (Number n) = [(Number n)]
-tailCalls (Boolean b) = [(Boolean b)]
-tailCalls (Identifier ident) = [(Identifier ident)]
+tailCalls (Number n) = []
+tailCalls (Boolean b) = []
+tailCalls (Identifier ident) = []
 tailCalls (And exprs) = tailCalls (last exprs)
 tailCalls (Or exprs) = tailCalls (last exprs)
 tailCalls (If condExpr thenExpr elseExpr) = (tailCalls(thenExpr)) ++ (tailCalls(elseExpr))

@@ -32,8 +32,16 @@ import Test.QuickCheck (quickCheck)
 -- | Build an environment from a list of bindings.
 -- Hint: this can be done with a single call to `foldl`,
 -- as long as you define the appropriate "update" function.
+
+buildEnvHelper :: Map.Map String Integer-> Binding ->  Map.Map String Integer
+buildEnvHelper map (Binding key (Identifier value)) = Map.insert key (map Map.! value) map
+buildEnvHelper map (Binding key (Number value)) = Map.insert key value map
+
+
 buildEnv :: Prog -> Map.Map String Integer
-buildEnv (Prog bindings) = undefined
+buildEnv (Prog bindings) = foldl buildEnvHelper Map.empty bindings
+
+
 
 
 -- | This is a sample test that checks a bunch of independent name bindings
