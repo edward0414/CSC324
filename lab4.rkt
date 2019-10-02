@@ -26,8 +26,30 @@ Lab handout: https://www.cs.toronto.edu/~david/csc324/labs/lab4/handout.html.
     (cond
       [(equal? attr 'x) x]
       [(equal? attr 'y) y]
+      [(equal? attr 'scale) (lambda (num) (Point (* x num) (* y num)))]
       [else (error (format "Point has no attribute ~a." attr))])))
 
+(define (point-sum func)
+  (+ (func 'x) (func 'y)))
+
+(point-sum (Point 2 3))
+
+(define (point-dist pt1 pt2)
+  (sqrt (+ (expt (- (pt1 'x) (pt2 'x)) 2) (expt (- (pt1 'y) (pt2 'y)) 2))))
+
+(point-dist (Point 2 2) (Point 5 6))
+
+(define (generate-pt num)
+  (map (lambda (i) (Point i i)) (range num)))
+
+(generate-pt 5)
+
+(define p (Point 2 3))      ; p is the point (2, 3)
+(p 'scale)                  ; #<procedure...>
+
+(define p2 ((p 'scale) 3))  ; p2 is the point (6, 9)
+(p2 'x)
+(p2 'y)
 
 ;-------------------------------------------------------------------------------
 ; â˜… Tasks 2 and 3: The attribute __dict__, and a basic functional update â˜…
@@ -43,4 +65,6 @@ Lab handout: https://www.cs.toronto.edu/~david/csc324/labs/lab4/handout.html.
   Task 3 asks you to add one more method `set-x` to this class.
 |#
 (define (PointHash x y)
-  (void))
+  (lambda (attr)
+    (let ([__dict__ (hash 'x x 'y y 'scale (lambda (i) (PointHash (* x i) (* y i))) 'set (lambda (attr i) (cond [(equal? attr 'x) (PointHash i y)] [(equal? attr 'y) (PointHash x i)])))])
+      (hash-ref __dict__ attr))))
