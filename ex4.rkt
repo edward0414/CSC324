@@ -38,7 +38,7 @@ Before starting, please review the exercise guidelines at
        it returns indexes rather than elements.
 |#
 
-#|Functions: index 0 is 'define, index 1 is args, index 2 is body |#
+
 
 #| contains helper, if a val exists in a list |#
 (define (contains lst val)
@@ -50,7 +50,8 @@ Before starting, please review the exercise guidelines at
     [(list? body) (indexes-where args (lambda (val) (contains body val)))]
     [else (indexes-of args body)]))
 
-#| foldl helper, creating strictness map |#
+#| foldl helper, creating strictness map for each expr |#
+#| Expr: index 0 is 'define, index 1 is args, index 2 is body |#
 (define (analyze-strictness-helper expr hash)
   (let ([args-with-func (second expr)])
     (hash-set hash (first args-with-func) (strictness-herlper (rest args-with-func) (third expr)))))
