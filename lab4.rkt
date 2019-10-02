@@ -66,5 +66,13 @@ Lab handout: https://www.cs.toronto.edu/~david/csc324/labs/lab4/handout.html.
 |#
 (define (PointHash x y)
   (lambda (attr)
-    (let ([__dict__ (hash 'x x 'y y 'scale (lambda (i) (PointHash (* x i) (* y i))) 'set (lambda (attr i) (cond [(equal? attr 'x) (PointHash i y)] [(equal? attr 'y) (PointHash x i)])))])
+    (let ([__dict__ 
+      (hash 
+        'x x 
+        'y y 
+        'scale (lambda (i) (PointHash (* x i) (* y i))) 
+        'set (lambda (attr i) 
+          (cond 
+          [(equal? attr 'x) (PointHash i y)] 
+          [(equal? attr 'y) (PointHash x i)])))])
       (hash-ref __dict__ attr))))
