@@ -47,8 +47,25 @@ import Ex4Types (Prog(..), FuncDef(..), Expr(..))
 --  2.  Working with list indexes is a bit more tedious in the pure functional world.
 --      Use the list function @List.findIndices@, which is similar to @filter@ except
 --      it returns indexes rather than elements.
+filterHelper :: Expr -> Bool
+filterHelper (Number val) = False
+filterHelper (Identifier val) = True
+filterHelper (Call funcName body) = filterHelper body
+
+exprToString :: [Expr] -> [String]
+exprToString body = filter filterHelper body
+
+
+strictnessHelper :: [String] -> Expr -> [Int]
+strictnessHelper args (Number body) = []
+strictnessHelper args (Identifier body) = List.elemIndices body args
+strictnessHelper args (Call funcName body) = List.findIndices (`elem` (exprToString body)) args
+
+analyzeStrictnessHelper :: Map.Map String [Int] -> FuncDef -> Map.Map String [Int]
+analyzeStrictnessHelper map (FuncDef funcName args body) = Map.insert funcName (strictnessHelper args body) map
+
 analyzeStrictness :: Prog -> Map.Map String [Int]
-analyzeStrictness (Prog funcDefs) = undefined
+analyzeStrictness (Prog funcDefs) = foldl analyzeStrictnessHelper Map.empty funcDefs
 
 
 -- |
