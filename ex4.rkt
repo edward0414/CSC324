@@ -37,9 +37,26 @@ Before starting, please review the exercise guidelines at
        Use the list function `indexes-where`, which is similar to `filter` except
        it returns indexes rather than elements.
 |#
-(define (analyze-strictness func-defs)
-  (void))
 
+#|Functions: index 0 is 'define, index 1 is args, index 2 is body |#
+
+#| contains helper, if a val exists in a list |#
+(define (contains lst val)
+  (cond ((member val lst) '#t) (else '#f)))
+
+#| list helper, creating a list of strict args |#
+(define (strictness-herlper args body)
+  (cond
+    [(list? body) (indexes-where args (lambda (val) (contains body val)))]
+    [else (indexes-of args body)]))
+
+#| foldl helper, creating strictness map |#
+(define (analyze-strictness-helper expr hash)
+  (let ([args-with-func (second expr)])
+    (hash-set hash (first args-with-func) (strictness-herlper (rest args-with-func) (third expr)))))
+
+(define (analyze-strictness func-defs)
+  (foldl analyze-strictness-helper (hash) func-defs))
 
 #|
 (strict-in? s-map id expr) -> boolean?
@@ -66,21 +83,21 @@ Before starting, please review the exercise guidelines at
 
 
 (module+ test
-  (require rackunit)
+    (require rackunit)
 
-  (test-equal? "Identity function"
-               (analyze-strictness '((define (f x) x)))
-               (hash
-                'f (list 0)))
+    (test-equal? "Identity function"
+                 (analyze-strictness '((define (f x) x)))
+                 (hash
+                  'f (list 0)))
 
-  (test-equal? "One function, with +"
-               (analyze-strictness '((define (f x y z) (+ x y))))
-               (hash
-                'f (list 0 1)))
+    (test-equal? "One function, with +"
+                 (analyze-strictness '((define (f x y z) (+ x y))))
+                 (hash
+                  'f (list 0 1)))
 
-  (test-equal? "Two functions, first all strict"
-               (analyze-strictness '((define (f1 x y z) (+ x y z))
-                                     (define (f2 a b) (f1 b 5 10))))
-               (hash
-                'f1 (list 0 1 2)
-                'f2 (list 1))))
+    (test-equal? "Two functions, first all strict"
+                 (analyze-strictness '((define (f1 x y z) (+ x y z))
+                                       (define (f2 a b) (f1 b 5 10))))
+                 (hash
+                  'f1 (list 0 1 2)
+                  'f2 (list 1))))
