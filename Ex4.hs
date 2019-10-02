@@ -48,14 +48,17 @@ import Ex4Types (Prog(..), FuncDef(..), Expr(..))
 --      Use the list function @List.findIndices@, which is similar to @filter@ except
 --      it returns indexes rather than elements.
 
+-- helper function: return a list of strict arguments given its expression
 strictnessHelper :: [String] -> Expr -> [Int]
 strictnessHelper args (Number body) = []
 strictnessHelper args (Identifier body) = List.elemIndices body args
 strictnessHelper args (Call funcName body) = foldl (\list body -> list ++ (strictnessHelper args body)) [] body
 
+-- foldl helper: map each funcName with its strict arguments
 analyzeStrictnessHelper :: Map.Map String [Int] -> FuncDef -> Map.Map String [Int]
 analyzeStrictnessHelper map (FuncDef funcName args body) = Map.insert funcName (strictnessHelper args body) map
 
+-- foldl for each expr, put them in a map
 analyzeStrictness :: Prog -> Map.Map String [Int]
 analyzeStrictness (Prog funcDefs) = foldl analyzeStrictnessHelper Map.empty funcDefs
 
