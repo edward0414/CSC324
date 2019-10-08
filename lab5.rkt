@@ -36,8 +36,8 @@ Lab handout: https://www.cs.toronto.edu/~david/csc324/labs/lab5/handout.html.
 |#
 (define-syntax my-and
   (syntax-rules ()
-    ))
-
+    [(my-and <p> <q>)
+     (if <p> (if <q> #t #f) #f)]))
 
 #|
 (my-or* p ...) -> boolean?
@@ -54,12 +54,15 @@ Lab handout: https://www.cs.toronto.edu/~david/csc324/labs/lab5/handout.html.
   (syntax-rules ()
     [(my-or*)
      ; Zero arguments. What does (or) return?
-     (void)]
+     (#f)]
     [(my-or* <first> <rest> ...)
      ; <first> matches the first argument.
      ; <rest> ... matches the other arguments (note the ellipsis).
-     (void)]))
+     (if <first> #t (my-or* <rest> ...))]))
 
+
+
+(my-or* #f #f #f #f #f)
 
 #|
 (my-and* p ...) -> boolean?
@@ -69,10 +72,15 @@ Lab handout: https://www.cs.toronto.edu/~david/csc324/labs/lab5/handout.html.
   of boolean arguments.
   It should behave the same as the built-in `and` (for boolean arguments).
 |#
+
+
 (define-syntax my-and*
   (syntax-rules ()
-    ))
+    [(my-and*) (#t)]
+    [(my-and* <first> <rest> ...)
+     (my-and <first> (my-and* <rest> ...))]))
 
+(my-and* #t #t #t #t #f)
 
 #|
 (my-cond
@@ -110,13 +118,13 @@ Lab handout: https://www.cs.toronto.edu/~david/csc324/labs/lab5/handout.html.
   ; Note that `constructor` is now a literal keyword.
   (syntax-rules (method constructor)
     [(my-class <class-name>
-       ; This is a *required* method that must appear first in the class body.
-       ; Also, there's no more explicit list of attributes.
-       (constructor (<new-param> ...) <new-body>)
+               ; This is a *required* method that must appear first in the class body.
+               ; Also, there's no more explicit list of attributes.
+               (constructor (<new-param> ...) <new-body>)
 
-       ; You can still define other methods, but they won't be very useful
-       ; without `self`.
-       (method (<method-name> <param> ...) <body>) ...)
+               ; You can still define other methods, but they won't be very useful
+               ; without `self`.
+               (method (<method-name> <param> ...) <body>) ...)
 
      ; TODO: Complete the following template.
      ; There are many different ways of supporting the required functionality,
@@ -131,8 +139,8 @@ Lab handout: https://www.cs.toronto.edu/~david/csc324/labs/lab5/handout.html.
     ; Macro pattern from lecture, provided for your reference.
     ; You don't need to change this!
     [(my-class <class-name> (<attr> ...)
-       (method (<method-name> <param> ...)
-               <body>) ...)
+               (method (<method-name> <param> ...)
+                       <body>) ...)
 
      (define (<class-name> <attr> ...)
        (let* ([__dict__
