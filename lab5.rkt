@@ -54,15 +54,12 @@ Lab handout: https://www.cs.toronto.edu/~david/csc324/labs/lab5/handout.html.
   (syntax-rules ()
     [(my-or*)
      ; Zero arguments. What does (or) return?
-     (#f)]
+     #f]
     [(my-or* <first> <rest> ...)
      ; <first> matches the first argument.
      ; <rest> ... matches the other arguments (note the ellipsis).
      (if <first> #t (my-or* <rest> ...))]))
 
-
-
-(my-or* #f #f #f #f #f)
 
 #|
 (my-and* p ...) -> boolean?
@@ -76,15 +73,13 @@ Lab handout: https://www.cs.toronto.edu/~david/csc324/labs/lab5/handout.html.
 
 (define-syntax my-and*
   (syntax-rules ()
-    [(my-and*) (#t)]
+    [(my-and*) #t]
     [(my-and* <first> <rest> ...)
      (my-and <first> (my-and* <rest> ...))]))
 
-(my-and* #t #t #t #t #f)
 
 #|
-(my-cond
-  [test-or-else then] ...)
+(my-cond [test-or-else then] ...)
 
   Behaves like the built-in `cond`, restricted to the forms where `test-or-else`
   is either an expression that returns a boolean (e.g., (> 3 4)) or the keyword `else`.
@@ -98,7 +93,7 @@ Lab handout: https://www.cs.toronto.edu/~david/csc324/labs/lab5/handout.html.
 |#
 (define-syntax my-cond
   (syntax-rules ()
-    ))
+    []))
 
 
 ;-------------------------------------------------------------------------------
