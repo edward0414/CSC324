@@ -94,6 +94,28 @@ Before starting, please review the exercise guidelines at
 ; â˜… Task 2: Simulating mutation â˜…
 ;-------------------------------------------------------------------------------
 #|
+(create-object class-name class__dict__ self__dict__)
+  class-name: symbol?
+    The name of the class of this object.
+  class__dict__: hash?
+    The class dictionary (used for method lookup).
+  self__dict__: hash?
+    The instance dictionary (used for other instance attributes).
+  
+  Returns an object (in the same representation we use in CSC324) that uses
+  the given dictionaries to define its attributes.
+  You may or may not want to add '__setattr__ here as well.
+|#
+(define (create-object class-name class__dict__ self__dict__)
+  (letrec ([me (lambda (msg)
+                (cond
+                  [(equal? msg '__setattr__) (lambda (attr expr) (create-object class-name class__dict__ (hash-set self__dict__ attr expr)))]
+                  [(hash-has-key? self__dict__ msg) (hash-ref self__dict__ msg)]
+                  [(hash-has-key? class__dict__ msg) (fix-first me (hash-ref class__dict__ msg))]
+                  [else ((attribute-error (quote <class-name>) msg))]))])
+    me))
+
+#|
 (my-class-setter <class-name> (<attr> ...)
   (method (<method-name> <param> ...) <body>) ...)
 
@@ -133,37 +155,11 @@ Before starting, please review the exercise guidelines at
          (letrec ([self__dict__
                    ; Dicionary of instance attributes.
                    (make-immutable-hash
-                    (list (cons (quote <attr>) <attr>) ...))]
-                  [me (lambda (msg)
-                        (cond
-                          ; Note the chained lookup here! First self__dict__, then class__dict__
-                          [(hash-has-key? self__dict__ msg)
-                           (hash-ref self__dict__ msg)]
-                          [(hash-has-key? class__dict__ msg)
-                           (fix-first me (hash-ref class__dict__ msg))]
-                          [else ((attribute-error (quote <class-name>) msg))]))])
-           me)))
+                    (list (cons (quote <attr>) <attr>) ...))])
+           (create-object <class-name> class__dict__ self__dict__))))
      ]))
 
-
-#|
-(create-object class-name class__dict__ self__dict__)
-  class-name: symbol?
-    The name of the class of this object.
-  class__dict__: hash?
-    The class dictionary (used for method lookup).
-  self__dict__: hash?
-    The instance dictionary (used for other instance attributes).
-  
-  Returns an object (in the same representation we use in CSC324) that uses
-  the given dictionaries to define its attributes.
-  You may or may not want to add '__setattr__ here as well.
-|#
-(define (create-object class-name class__dict__ self__dict__)
-  (void))
-
-
-#;(module+ test
+(module+ test
     (local
       [(my-class-setter Point (x y)
                         (method (size self)

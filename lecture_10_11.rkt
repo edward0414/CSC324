@@ -32,7 +32,7 @@
                         (cond
                           ; Note the chained lookup here! First self__dict__, then class__dict__
                           [(hash-has-key? self__dict__ msg)
-                           "here"]
+                           (hash-ref self__dict__ msg)]
                           [(hash-has-key? class__dict__ msg)
                            (fix-first me (hash-ref class__dict__ msg))]
                           [else ((attribute-error (quote <class-name>) msg))]))])
