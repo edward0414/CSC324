@@ -38,7 +38,7 @@ Before starting, please review the exercise guidelines at
 (define-syntax my-class-getter
   (syntax-rules (method)
     [(my-class-getter <class-name> (<attr> ...)
-       (method (<method-name> <param> ...) <body>) ...)
+                      (method (<method-name> <param> ...) <body>) ...)
 
      ; Template (the code we want to run)
      (begin
@@ -66,7 +66,9 @@ Before starting, please review the exercise guidelines at
            me))
 
        ; You can (and should) add more definitions here.
-       )]))
+       (define (<attr> <class-name>)
+         (<class-name> (quote <attr>)))...
+                                       )]))
 
 
 (module+ test
@@ -74,18 +76,18 @@ Before starting, please review the exercise guidelines at
 
   ; We use `local` to create a local scope for our definitions.
   ; Run these tests when you're ready!
-  #;(local
-      [(my-class-getter Point (x y)
-         (method (size self)
-                 (sqrt (+ (* (self 'x) (self 'x)) (* (self 'y) (self 'y)))))
+  (local
+    [(my-class-getter Point (x y)
+                      (method (size self)
+                              (sqrt (+ (* (self 'x) (self 'x)) (* (self 'y) (self 'y)))))
 
-         (method (scale self n)
-                 (Point (* (self 'x) n) (* (self 'y) n))))]
-      (test-true "x and y are functions" (and (procedure? x) (procedure? y)))
-      (test-equal? "x and y are accessors"
-                   (let* ([p (Point 2 3)])
-                     (list (x p) (y p)))
-                   (list 2 3))))
+                      (method (scale self n)
+                              (Point (* (self 'x) n) (* (self 'y) n))))]
+    (test-true "x and y are functions" (and (procedure? x) (procedure? y)))
+    (test-equal? "x and y are accessors"
+                 (let* ([p (Point 2 3)])
+                   (list (x p) (y p)))
+                 (list 2 3))))
 
 
 ;-------------------------------------------------------------------------------
@@ -119,7 +121,7 @@ Before starting, please review the exercise guidelines at
 (define-syntax my-class-setter
   (syntax-rules (method)
     [(my-class-setter <class-name> (<attr> ...)
-       (method (<method-name> <param> ...) <body>) ...)
+                      (method (<method-name> <param> ...) <body>) ...)
 
      (begin
        (define class__dict__
@@ -162,33 +164,33 @@ Before starting, please review the exercise guidelines at
 
 
 #;(module+ test
-  (local
-    [(my-class-setter Point (x y)
-       (method (size self)
-               (sqrt (+ (* (self 'x) (self 'x))
-                        (* (self 'y) (self 'y)))))
+    (local
+      [(my-class-setter Point (x y)
+                        (method (size self)
+                                (sqrt (+ (* (self 'x) (self 'x))
+                                         (* (self 'y) (self 'y)))))
 
-       (method (scale self n)
-               (Point (* (self 'x) n) (* (self 'y) n))))]
-    (test-true "__setattr__ is a method" (procedure? ((Point 2 3) '__setattr__)))
-    (test-equal? "__setattr__ changes an attribute"
-                 (let* ([p (Point 2 3)]
-                        [p2 ((p '__setattr__) 'x 5)])
-                   (p2 'x))
-                 5)
-    (test-equal? "__setattr__ adds a new attribute"
-                 (let* ([p (Point 2 3)]
-                        [p2 ((p '__setattr__) 'z 5)])
-                   (p2 'z))
-                 5)
-    (test-equal? "__setattr__ doesn't mutate original object"
-                 (let* ([p (Point 2 3)]
-                        [p2 ((p '__setattr__) 'x 5)])
-                   (p 'x))
-                 2)
-    (test-equal? "Multiple __setattr__ chained"
-                 (let* ([p (Point 2 3)]
-                        [p2 ((p '__setattr__) 'x 5)]
-                        [p3 ((p2 '__setattr__) 'x 10)])
-                   (p3 'x))
-                 10)))
+                        (method (scale self n)
+                                (Point (* (self 'x) n) (* (self 'y) n))))]
+      (test-true "__setattr__ is a method" (procedure? ((Point 2 3) '__setattr__)))
+      (test-equal? "__setattr__ changes an attribute"
+                   (let* ([p (Point 2 3)]
+                          [p2 ((p '__setattr__) 'x 5)])
+                     (p2 'x))
+                   5)
+      (test-equal? "__setattr__ adds a new attribute"
+                   (let* ([p (Point 2 3)]
+                          [p2 ((p '__setattr__) 'z 5)])
+                     (p2 'z))
+                   5)
+      (test-equal? "__setattr__ doesn't mutate original object"
+                   (let* ([p (Point 2 3)]
+                          [p2 ((p '__setattr__) 'x 5)])
+                     (p 'x))
+                   2)
+      (test-equal? "Multiple __setattr__ chained"
+                   (let* ([p (Point 2 3)]
+                          [p2 ((p '__setattr__) 'x 5)]
+                          [p3 ((p2 '__setattr__) 'x 10)])
+                     (p3 'x))
+                   10)))
