@@ -49,22 +49,45 @@ module Lab10 where
     -- The `if` is easier to deal with first if you're using explicit (>>=) rather
     -- than do notation!
     play :: State (Stack Integer) ()
-    play = undefined
+    play = let
+                pushedStack = (push 1)
+                stackWithoutX = pushedStack >>= \_ -> pop
+                isEmptyStack = stackWithoutX >>= \_ -> isEmpty
+            in
+                isEmptyStack >>= \empty ->
+                    if empty then
+                        stackWithoutX >>= \x -> push x
+                    else
+                        stackWithoutX >>= \x -> push (x+1)
     
     -- | Remove and return the item that is second from the top of the stack.
     -- Assume that the stack has at least 2 items.
     removeSecond :: State (Stack a) a
-    removeSecond = undefined
+    removeSecond =
+        pop >>= \x1 ->
+        pop >>= \x2 ->
+        push x1 >>= \_ ->
+        state $ \s -> (x2, s)
     
     -- | Remove and return the item that is third from the top of the stack.
     -- Assume that the stack has at least 3 items.
     removeThird :: State (Stack a) a
-    removeThird = undefined
+    removeThird = 
+        pop >>= \x1 ->
+        pop >>= \x2 ->
+        pop >>= \x3 ->
+        push x2 >>= \_ ->
+        push x1 >>= \_ ->
+        state $ \s -> (x3, s)
     
     -- | Remove and return the item that is n-th from the top of the stack.
     -- Assume that n >= 1, and that the stack has at least n items.
     removeNth :: Integer -> State (Stack a) a
-    removeNth = undefined
+    removeNth 1 = pop
+    removeNth n = pop >>= \x ->
+                (removeNth (n-1)) >>= \x_m ->
+                push x >>= \_ ->
+                state $ \s -> (x_m, s)
     
     
     -------------------------------------------------------------------------------

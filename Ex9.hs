@@ -34,13 +34,18 @@ import Test.QuickCheck (quickCheck, (===), Property)
 -- = Task 1: The Tree data type
 -------------------------------------------------------------------------------
 -- | Returns the sum of the numbers in the tree.
+getTreeValues :: Tree  -> [Integer]
+getTreeValues Empty = Empty
+getTreeValues (Tree a children) = Cons (a) (map getTreeValues children)
+
 treeSum :: Tree Integer -> Integer
-treeSum = undefined
+treeSum Null a = 0
+treeSum (Tree a children) = a + foldl (\treeVal total -> treeVal + total) 0 children
 
 -- | Make Tree an instance of Functor.
 instance Functor Tree where
     fmap :: (a -> b) -> Tree a -> Tree b
-    fmap = undefined
+    fmap = 
 
 
 ---------------------------------------------------------------------------------

@@ -136,3 +136,6 @@ increment :: State.State Integer ()
 increment = do
     curr <- State.get
     State.put (curr + 1)
+
+main :: IO ()
+main = fib 10
