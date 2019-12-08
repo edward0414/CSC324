@@ -43,12 +43,18 @@ module Lab9 where
     -- data Maybe = Nothing | Just a
     
     safeHead :: [a] -> Maybe a
-    safeHead Nothing = Nothing
-    safeHead list = Just (head list)
+    safeHead list =
+        if length list == 0 then
+            Nothing
+        else
+            Just (head list)
     
     safeTail :: [a] -> Maybe [a]
-    safeTail Nothing = Nothing
-    safeTail list = Just (tail list)
+    safeTail list =
+        if length list == 0 then
+            Nothing
+        else
+            Just (tail list)
     
     onlyWhen :: (a -> Bool) -> a -> Maybe a
     onlyWhen pred elem =
