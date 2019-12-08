@@ -21,17 +21,17 @@ module Lab9 where
     
     -- Note that (_, _) is the Haskell *tuple* type, which is also generically polymorphic.
     f0 :: a -> (a, a)
-    f0 x = undefined
+    f0 x = (x, x)
     
     f1 :: (a -> b -> c) -> a -> b -> c
-    f1 x y z = undefined
+    f1 x y z = x y z
     
     f2 :: (b -> c) -> (a -> b) -> a -> c
-    f2 g h x = undefined
+    f2 g h x = g (h x)
     
     -- What's special about this one?
     f3 :: (a, b) -> (c -> b)
-    f3 (x, y) = undefined
+    f3 (x, y) = \a -> y
     
     
     -------------------------------------------------------------------------------
@@ -43,16 +43,23 @@ module Lab9 where
     -- data Maybe = Nothing | Just a
     
     safeHead :: [a] -> Maybe a
-    safeHead = undefined
+    safeHead Nothing = Nothing
+    safeHead list = Just (head list)
     
     safeTail :: [a] -> Maybe [a]
-    safeTail = undefined
+    safeTail Nothing = Nothing
+    safeTail list = Just (tail list)
     
     onlyWhen :: (a -> Bool) -> a -> Maybe a
-    onlyWhen = undefined
+    onlyWhen pred elem =
+        if (pred elem) then 
+            Just (elem)
+        else
+            Nothing
     
     try :: (a -> b) -> Maybe a -> Maybe b
-    try = undefined
+    try f Nothing = Nothing
+    try f (Just x) = Just (f x)
     
     
     -------------------------------------------------------------------------------
@@ -64,3 +71,10 @@ module Lab9 where
         = Circle Float            -- ^ A circle with the given radius
         | Rectangle Float Float   -- ^ A rectangle with the given width and height
         | Square Float            -- ^ A square with the given side length
+
+    instance Eq Shape where
+        (Circle rad1) == (Circle rad2) = rad1 == rad2
+        (Rectangle w1 h1) == (Rectangle w2 h2) = (w1 == w2) && (h1 == h2)
+        (Square w1) == (Square w2) = (w1 == w2)
+        (Square w1) == (Rectangle w2 h2) = (w1 == w2) && (w1 == h2)
+        _ == _ = False
